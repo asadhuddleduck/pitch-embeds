@@ -17,6 +17,7 @@
   .hd-step {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 40px;
     padding: 40px 32px;
     min-height: 260px;
@@ -270,9 +271,11 @@
   .hd-step.visible .card-row:nth-child(3) .row-icon { animation-delay: 3s; }
   .hd-step.visible .card-row:nth-child(4) .row-icon { animation-delay: 4.5s; }
 
-  /* ── AI / Human slider ── */
+  /* ── AI / Human Power Bar ── */
   .ratio-bar {
-    margin-top: 20px;
+    flex-basis: 100%;
+    max-width: 440px;
+    margin: 8px auto 0;
     opacity: 0;
     transform: translateY(8px);
     transition: opacity 0.5s ease, transform 0.5s ease;
@@ -287,54 +290,90 @@
     margin-bottom: 6px;
   }
   .ratio-label {
-    font-size: 10px;
-    font-weight: 700;
+    font-size: 11px;
+    font-weight: 900;
     letter-spacing: 0.5px;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
   }
   .ratio-label.ai { color: #1EBA8F; }
   .ratio-label.human { color: #E8913A; }
-  .ratio-emoji { font-size: 13px; }
+  .ratio-emoji { font-size: 14px; }
 
   .ratio-track {
     width: 100%;
-    height: 6px;
-    border-radius: 3px;
-    background: linear-gradient(90deg, #E8EEF1 0%, #E8EEF1 100%);
+    height: 14px;
+    border-radius: 7px;
+    background: #F0F3F5;
+    border: 1px solid #E0E6EA;
     overflow: hidden;
     position: relative;
+    display: flex;
   }
-  .ratio-fill {
+
+  .ratio-fill-ai {
     height: 100%;
-    border-radius: 3px;
     width: 0%;
     transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
     transition-delay: 1.8s;
-    background: linear-gradient(90deg, #1EBA8F, #5EDBB8);
+    background: linear-gradient(90deg, #15A37D, #1EBA8F, #3ECFA8);
+    position: relative;
+    overflow: hidden;
   }
-  .hd-step.visible .ratio-fill { width: 90%; }
+  .hd-step.visible .ratio-fill-ai { width: 90%; }
 
-  .ratio-track::after {
+  .ratio-fill-human {
+    height: 100%;
+    width: 0%;
+    transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: 1.8s;
+    background: linear-gradient(90deg, #F0B849, #E8913A);
+    position: relative;
+    overflow: hidden;
+    margin-left: auto;
+  }
+  .hd-step.visible .ratio-fill-human { width: 10%; }
+
+  /* Shine sweep — loops on both fills */
+  .ratio-fill-ai::after,
+  .ratio-fill-human::after {
     content: '';
     position: absolute;
     top: 0;
-    right: 0;
+    left: -60%;
+    width: 40%;
     height: 100%;
-    width: 0%;
-    border-radius: 3px;
-    background: linear-gradient(90deg, #F7CE46, #E8913A);
-    transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-    transition-delay: 1.8s;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.35) 40%,
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0.35) 60%,
+      transparent 100%
+    );
+    animation: none;
   }
-  .hd-step.visible .ratio-track::after { width: 10%; }
+
+  .hd-step.visible .ratio-fill-ai::after {
+    animation: bar-shine 3s ease-in-out 2.5s infinite;
+  }
+  .hd-step.visible .ratio-fill-human::after {
+    animation: bar-shine 3s ease-in-out 3.5s infinite;
+  }
+
+  @keyframes bar-shine {
+    0% { left: -60%; }
+    60% { left: 120%; }
+    100% { left: 120%; }
+  }
 
   .ratio-context {
     font-size: 9px;
     color: #5A7A8A;
-    margin-top: 5px;
+    margin-top: 6px;
     letter-spacing: 0.3px;
+    text-align: center;
   }
 
   /* ── Mobile ── */
@@ -403,17 +442,19 @@
         </div>
       </div>
 
-      <div class="ratio-bar">
-        <div class="ratio-labels">
-          <span class="ratio-label ai"><span class="ratio-emoji">🤖</span> 90% AI</span>
-          <span class="ratio-label human">10% Human <span class="ratio-emoji">🧑</span></span>
-        </div>
-        <div class="ratio-track">
-          <div class="ratio-fill"></div>
-        </div>
-        <div class="ratio-context">Deep research &amp; analysis — AI builds the full avatar</div>
-      </div>
     </div>
+  </div>
+
+  <div class="ratio-bar">
+    <div class="ratio-labels">
+      <span class="ratio-label ai"><span class="ratio-emoji">🤖</span> 90% AI</span>
+      <span class="ratio-label human">10% Human <span class="ratio-emoji">🧑</span></span>
+    </div>
+    <div class="ratio-track">
+      <div class="ratio-fill-ai"></div>
+      <div class="ratio-fill-human"></div>
+    </div>
+    <div class="ratio-context">Deep research &amp; analysis — AI builds the full avatar</div>
   </div>
 </div>
 

@@ -292,11 +292,11 @@
     animation: tag-breathe 10s ease-in-out infinite;
   }
 
-  /* ── AI / Human slider ── */
+  /* ── AI / Human Power Bar ── */
   .ratio-bar {
     flex-basis: 100%;
-    max-width: 400px;
-    margin: -20px auto 0;
+    max-width: 440px;
+    margin: 8px auto 0;
     opacity: 0;
     transform: translateY(8px);
     transition: opacity 0.5s ease, transform 0.5s ease;
@@ -311,40 +311,73 @@
     margin-bottom: 6px;
   }
   .ratio-label {
-    font-size: 10px;
-    font-weight: 700;
+    font-size: 11px;
+    font-weight: 900;
     letter-spacing: 0.5px;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
   }
   .ratio-label.ai { color: #1EBA8F; }
   .ratio-label.human { color: #5A7A8A; }
-  .ratio-emoji { font-size: 13px; }
+  .ratio-emoji { font-size: 14px; }
 
   .ratio-track {
     width: 100%;
-    height: 6px;
-    border-radius: 3px;
-    background: #E8EEF1;
+    height: 14px;
+    border-radius: 7px;
+    background: #F0F3F5;
+    border: 1px solid #E0E6EA;
     overflow: hidden;
     position: relative;
+    display: flex;
   }
-  .ratio-fill {
+
+  .ratio-fill-ai {
     height: 100%;
-    border-radius: 3px;
     width: 0%;
     transition: width 1.4s cubic-bezier(0.22, 1, 0.36, 1);
     transition-delay: 2.4s;
-    background: linear-gradient(90deg, #1EBA8F, #5EDBB8);
+    background: linear-gradient(90deg, #15A37D, #1EBA8F, #3ECFA8);
+    position: relative;
+    overflow: hidden;
   }
-  .hd-step.visible .ratio-fill { width: 100%; }
+  .hd-step.visible .ratio-fill-ai { width: 100%; }
+
+  .ratio-fill-ai::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.35) 40%,
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0.35) 60%,
+      transparent 100%
+    );
+    animation: none;
+  }
+
+  .hd-step.visible .ratio-fill-ai::after {
+    animation: bar-shine 3s ease-in-out 3s infinite;
+  }
+
+  @keyframes bar-shine {
+    0% { left: -60%; }
+    60% { left: 120%; }
+    100% { left: 120%; }
+  }
 
   .ratio-context {
     font-size: 9px;
     color: #5A7A8A;
-    margin-top: 5px;
+    margin-top: 6px;
     letter-spacing: 0.3px;
+    text-align: center;
   }
 
   /* ── Mobile ── */
@@ -453,7 +486,7 @@
       <span class="ratio-label human">0% Human</span>
     </div>
     <div class="ratio-track">
-      <div class="ratio-fill"></div>
+      <div class="ratio-fill-ai"></div>
     </div>
     <div class="ratio-context">Fully automated — AI handles all targeting &amp; audience selection</div>
   </div>
