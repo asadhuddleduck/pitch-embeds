@@ -17,6 +17,7 @@
   .hd-step {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 40px;
     padding: 40px 32px;
     min-height: 280px;
@@ -291,6 +292,61 @@
     animation: tag-breathe 10s ease-in-out infinite;
   }
 
+  /* ── AI / Human slider ── */
+  .ratio-bar {
+    flex-basis: 100%;
+    max-width: 400px;
+    margin: -20px auto 0;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition-delay: 2.2s;
+  }
+  .hd-step.visible .ratio-bar { opacity: 1; transform: translateY(0); }
+
+  .ratio-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .ratio-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .ratio-label.ai { color: #1EBA8F; }
+  .ratio-label.human { color: #5A7A8A; }
+  .ratio-emoji { font-size: 13px; }
+
+  .ratio-track {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #E8EEF1;
+    overflow: hidden;
+    position: relative;
+  }
+  .ratio-fill {
+    height: 100%;
+    border-radius: 3px;
+    width: 0%;
+    transition: width 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: 2.4s;
+    background: linear-gradient(90deg, #1EBA8F, #5EDBB8);
+  }
+  .hd-step.visible .ratio-fill { width: 100%; }
+
+  .ratio-context {
+    font-size: 9px;
+    color: #5A7A8A;
+    margin-top: 5px;
+    letter-spacing: 0.3px;
+  }
+
   /* ── Mobile ── */
   @media (max-width: 500px) {
     .hd-step {
@@ -389,6 +445,17 @@
       <!-- AI tag -->
       <div class="ai-tag">AI Targeting</div>
     </div>
+  </div>
+
+  <div class="ratio-bar">
+    <div class="ratio-labels">
+      <span class="ratio-label ai"><span class="ratio-emoji">🤖</span> 100% AI</span>
+      <span class="ratio-label human">0% Human</span>
+    </div>
+    <div class="ratio-track">
+      <div class="ratio-fill"></div>
+    </div>
+    <div class="ratio-context">Fully automated — AI handles all targeting &amp; audience selection</div>
   </div>
 </div>
 
