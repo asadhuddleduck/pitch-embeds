@@ -225,48 +225,46 @@
   .hd-step.visible .loop-centre { transform: translate(-50%, -50%) scale(1); }
 
   /* ── Looping ambient animations ── */
-  @keyframes node-breathe {
+  @keyframes soft-glow {
     0%, 100% { box-shadow: 0 0 0 0 rgba(30, 186, 143, 0); }
-    50% { box-shadow: 0 0 12px 3px rgba(30, 186, 143, 0.15); }
+    50% { box-shadow: 0 0 8px 0 rgba(30, 186, 143, 0.08); }
   }
 
-  @keyframes infinity-pulse {
-    0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
+  @keyframes infinity-breathe {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
   }
 
-  @keyframes stat-glow {
+  @keyframes stat-breathe {
     0%, 100% { border-color: #E8EEF1; }
-    50% { border-color: #C4EDE0; }
+    50% { border-color: #D1E8DF; }
   }
 
-  @keyframes loop-rotate {
+  @keyframes loop-drift {
     0% { stroke-dashoffset: 0; }
     100% { stroke-dashoffset: -377; }
   }
 
   .hd-step.visible .loop-node {
-    animation: node-breathe 3.5s ease-in-out infinite;
+    animation: soft-glow 8s ease-in-out infinite;
   }
-  .hd-step.visible .node-data { animation-delay: 2.5s; }
-  .hd-step.visible .node-content { animation-delay: 3.0s; }
-  .hd-step.visible .node-target { animation-delay: 3.5s; }
+  .hd-step.visible .node-data { animation-delay: 0s; }
+  .hd-step.visible .node-content { animation-delay: 2.5s; }
+  .hd-step.visible .node-target { animation-delay: 5s; }
 
   .hd-step.visible .loop-centre {
-    animation: infinity-pulse 2.5s ease-in-out infinite;
-    animation-delay: 2.5s;
+    animation: infinity-breathe 8s ease-in-out infinite;
   }
 
   .hd-step.visible .stat-card {
-    animation: stat-glow 4s ease-in-out infinite;
+    animation: stat-breathe 10s ease-in-out infinite;
   }
-  .hd-step.visible .stat-card:nth-child(1) { animation-delay: 2s; }
-  .hd-step.visible .stat-card:nth-child(2) { animation-delay: 2.4s; }
-  .hd-step.visible .stat-card:nth-child(3) { animation-delay: 2.8s; }
+  .hd-step.visible .stat-card:nth-child(1) { animation-delay: 0s; }
+  .hd-step.visible .stat-card:nth-child(2) { animation-delay: 3s; }
+  .hd-step.visible .stat-card:nth-child(3) { animation-delay: 6s; }
 
   .hd-step.visible .loop-path-active {
-    animation: loop-rotate 8s linear infinite;
-    animation-delay: 3s;
+    animation: loop-drift 20s linear infinite;
     stroke-dasharray: 60 317;
     stroke-dashoffset: 0;
   }

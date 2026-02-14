@@ -304,48 +304,22 @@
   }
 
   /* ── Looping ambient animations ── */
-  @keyframes icon-bob {
-    0%, 100% { transform: scale(1) translateY(0); }
-    50% { transform: scale(1) translateY(-2px); }
-  }
-
-  @keyframes pipeline-pulse {
+  @keyframes pipeline-breathe {
     0%, 100% { border-color: #E8EEF1; }
-    50% { border-color: #C4EDE0; }
+    50% { border-color: #D1E8DF; }
   }
 
-  @keyframes flow-shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
-
-  @keyframes human-breathe {
+  @keyframes soft-glow {
     0%, 100% { box-shadow: 0 0 0 0 rgba(30, 186, 143, 0); }
-    50% { box-shadow: 0 0 14px 3px rgba(30, 186, 143, 0.15); }
+    50% { box-shadow: 0 0 8px 0 rgba(30, 186, 143, 0.08); }
   }
-
-  .hd-step.visible .social-icon {
-    animation: icon-bob 3.5s ease-in-out infinite;
-  }
-  .hd-step.visible .social-icon:nth-child(1) { animation-delay: 2s; }
-  .hd-step.visible .social-icon:nth-child(2) { animation-delay: 2.3s; }
-  .hd-step.visible .social-icon:nth-child(3) { animation-delay: 2.6s; }
 
   .hd-step.visible .pipeline {
-    animation: pipeline-pulse 4s ease-in-out infinite;
-    animation-delay: 2s;
-  }
-
-  .hd-step.visible .scrape-line::after {
-    background: linear-gradient(90deg, #1EBA8F 0%, #1EBA8F 40%, #5EDBB8 50%, #1EBA8F 60%, #1EBA8F 100%) !important;
-    background-size: 200% 100% !important;
-    animation: flow-shimmer 3s ease-in-out infinite;
-    animation-delay: 2.2s;
+    animation: pipeline-breathe 10s ease-in-out infinite;
   }
 
   .hd-step.visible .human-icon-circle {
-    animation: human-breathe 3.5s ease-in-out infinite;
-    animation-delay: 2.5s;
+    animation: soft-glow 8s ease-in-out infinite;
   }
 
   /* ── Mobile ── */
