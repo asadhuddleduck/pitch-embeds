@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: #FFFFFF;
+    overflow: hidden;
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .hd-step {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: 40px 32px;
+    min-height: 280px;
+  }
+
+  /* ── Left: step number + label ── */
+  .step-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .hd-step.visible .step-meta { opacity: 1; transform: translateY(0); }
+
+  .step-number {
+    font-size: 48px;
+    font-weight: 900;
+    color: #1EBA8F;
+    line-height: 1;
+  }
+
+  .step-label {
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #5A7A8A;
+    margin-top: 8px;
+    text-align: center;
+    max-width: 90px;
+    line-height: 1.4;
+  }
+
+  /* ── Divider ── */
+  .step-divider {
+    width: 2px;
+    height: 80px;
+    background: #E8EEF1;
+    position: relative;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .step-divider::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #1EBA8F;
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.6s ease;
+    transition-delay: 0.3s;
+  }
+  .hd-step.visible .step-divider::after { transform: scaleY(1); }
+
+  /* ── Right: recycling visual ── */
+  .recycling-visual {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition-delay: 0.2s;
+  }
+  .hd-step.visible .recycling-visual { opacity: 1; transform: translateY(0); }
+
+  /* Stat cards */
+  .stat-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .stat-card {
+    background: #F7F9FA;
+    border: 1px solid #E8EEF1;
+    border-radius: 10px;
+    padding: 12px 18px;
+    text-align: center;
+    transform: translateY(10px);
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+  }
+  .stat-card:nth-child(1) { transition-delay: 0.6s; }
+  .stat-card:nth-child(2) { transition-delay: 0.75s; }
+  .stat-card:nth-child(3) { transition-delay: 0.9s; }
+
+  .hd-step.visible .stat-card { transform: translateY(0); opacity: 1; }
+
+  .stat-value {
+    font-size: 24px;
+    font-weight: 900;
+    color: #1EBA8F;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-value.down { color: #1EBA8F; }
+
+  .stat-desc {
+    font-size: 9px;
+    font-weight: 700;
+    color: #5A7A8A;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* Recycling loop SVG */
+  .loop-wrap {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    flex-shrink: 0;
+  }
+
+  .loop-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .loop-path {
+    fill: none;
+    stroke: #E8EEF1;
+    stroke-width: 2;
+  }
+
+  .loop-path-active {
+    fill: none;
+    stroke: #1EBA8F;
+    stroke-width: 2.5;
+    stroke-dasharray: 400;
+    stroke-dashoffset: 400;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 2s ease;
+    transition-delay: 1.0s;
+  }
+  .hd-step.visible .loop-path-active { stroke-dashoffset: 0; }
+
+  /* Loop nodes */
+  .loop-node {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    background: #FFFFFF;
+    border: 2px solid #E8EEF1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: scale(0);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease;
+    z-index: 2;
+  }
+
+  .loop-node svg { width: 16px; height: 16px; }
+
+  .node-data { top: 0; left: 50%; margin-left: -18px; transition-delay: 1.2s; }
+  .node-content { bottom: 0; left: 50%; margin-left: -18px; transition-delay: 1.5s; }
+  .node-target { top: 50%; right: 0; margin-top: -18px; transition-delay: 1.8s; }
+
+  .hd-step.visible .loop-node {
+    transform: scale(1);
+    border-color: #1EBA8F;
+  }
+
+  .node-label {
+    position: absolute;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #5A7A8A;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .node-data .node-label { top: -16px; left: 50%; transform: translateX(-50%); transition-delay: 1.3s; }
+  .node-content .node-label { bottom: -16px; left: 50%; transform: translateX(-50%); transition-delay: 1.6s; }
+  .node-target .node-label { right: -8px; top: -16px; transition-delay: 1.9s; }
+
+  .hd-step.visible .node-label { opacity: 1; }
+
+  /* Centre "infinite" symbol */
+  .loop-centre {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 28px;
+    color: #1EBA8F;
+    font-weight: 900;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition-delay: 2.0s;
+    z-index: 3;
+    line-height: 1;
+  }
+  .hd-step.visible .loop-centre { transform: translate(-50%, -50%) scale(1); }
+
+  /* ── Looping ambient animations ── */
+  @keyframes node-breathe {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(30, 186, 143, 0); }
+    50% { box-shadow: 0 0 12px 3px rgba(30, 186, 143, 0.15); }
+  }
+
+  @keyframes infinity-pulse {
+    0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
+  }
+
+  @keyframes stat-glow {
+    0%, 100% { border-color: #E8EEF1; }
+    50% { border-color: #C4EDE0; }
+  }
+
+  @keyframes loop-rotate {
+    0% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: -377; }
+  }
+
+  .hd-step.visible .loop-node {
+    animation: node-breathe 3.5s ease-in-out infinite;
+  }
+  .hd-step.visible .node-data { animation-delay: 2.5s; }
+  .hd-step.visible .node-content { animation-delay: 3.0s; }
+  .hd-step.visible .node-target { animation-delay: 3.5s; }
+
+  .hd-step.visible .loop-centre {
+    animation: infinity-pulse 2.5s ease-in-out infinite;
+    animation-delay: 2.5s;
+  }
+
+  .hd-step.visible .stat-card {
+    animation: stat-glow 4s ease-in-out infinite;
+  }
+  .hd-step.visible .stat-card:nth-child(1) { animation-delay: 2s; }
+  .hd-step.visible .stat-card:nth-child(2) { animation-delay: 2.4s; }
+  .hd-step.visible .stat-card:nth-child(3) { animation-delay: 2.8s; }
+
+  .hd-step.visible .loop-path-active {
+    animation: loop-rotate 8s linear infinite;
+    animation-delay: 3s;
+    stroke-dasharray: 60 317;
+    stroke-dashoffset: 0;
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 500px) {
+    .hd-step {
+      flex-direction: column;
+      gap: 20px;
+      padding: 28px 20px;
+      min-height: auto;
+    }
+    .step-meta { flex-direction: row; gap: 12px; }
+    .step-number { font-size: 36px; }
+    .step-label { max-width: none; }
+    .step-divider { width: 40px; height: 2px; }
+    .step-divider::after { transform-origin: left; }
+    .hd-step.visible .step-divider::after { transform: scaleX(1); }
+    .recycling-visual { flex-direction: column; gap: 20px; }
+    .stat-cards { flex-direction: row; gap: 8px; }
+    .stat-card { padding: 10px 14px; }
+    .stat-value { font-size: 20px; }
+    .loop-wrap { width: 130px; height: 130px; }
+  }
+</style>
+</head>
+<body>
+<div class="hd-step" id="step">
+  <div class="step-meta">
+    <div class="step-number">05</div>
+    <div class="step-label">Data, Optimise & Recycle</div>
+  </div>
+
+  <div class="step-divider"></div>
+
+  <div class="recycling-visual">
+    <!-- Stat cards -->
+    <div class="stat-cards">
+      <div class="stat-card">
+        <div class="stat-value" data-count="47" data-suffix="%">0%</div>
+        <div class="stat-desc">Lower CPA</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" data-count="3" data-suffix="x">0x</div>
+        <div class="stat-desc">More Reach</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value down" data-count="12" data-prefix="Week ">Week 0</div>
+        <div class="stat-desc">Auto-Optimised</div>
+      </div>
+    </div>
+
+    <!-- Loop diagram -->
+    <div class="loop-wrap">
+      <svg class="loop-svg" viewBox="0 0 160 160" fill="none">
+        <!-- Background circle -->
+        <circle cx="80" cy="80" r="60" class="loop-path"/>
+        <!-- Active draw circle -->
+        <circle cx="80" cy="80" r="60" class="loop-path-active" transform="rotate(-90 80 80)"/>
+        <!-- Arrow heads on the loop -->
+        <polygon points="80,18 76,26 84,26" fill="#E8EEF1" class="loop-arrow-1"/>
+        <polygon points="142,80 134,76 134,84" fill="#E8EEF1" class="loop-arrow-2"/>
+        <polygon points="80,142 84,134 76,134" fill="#E8EEF1" class="loop-arrow-3"/>
+      </svg>
+
+      <!-- Nodes -->
+      <div class="loop-node node-data">
+        <div class="node-label">Analyse</div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1EBA8F" stroke-width="2" stroke-linecap="round">
+          <rect x="4" y="4" width="16" height="16" rx="2"/>
+          <path d="M8 16V12M12 16V8M16 16V10"/>
+        </svg>
+      </div>
+      <div class="loop-node node-content">
+        <div class="node-label">Create</div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1EBA8F" stroke-width="2" stroke-linecap="round">
+          <rect x="3" y="5" width="18" height="14" rx="2"/>
+          <path d="M10 9l5 3-5 3V9z"/>
+        </svg>
+      </div>
+      <div class="loop-node node-target">
+        <div class="node-label">Launch</div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1EBA8F" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="8"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="12" cy="12" r="1" fill="#1EBA8F"/>
+        </svg>
+      </div>
+
+      <!-- Infinite symbol in centre -->
+      <div class="loop-centre">&infin;</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var step = document.getElementById('step');
+
+  /* Animated counters */
+  function animateCounter(el) {
+    var target = parseInt(el.getAttribute('data-count'), 10);
+    var suffix = el.getAttribute('data-suffix') || '';
+    var prefix = el.getAttribute('data-prefix') || '';
+    var duration = 1500;
+    var started = false;
+
+    function runCount() {
+      if (started) return;
+      started = true;
+      var start = performance.now();
+      function tick(now) {
+        var elapsed = now - start;
+        var progress = Math.min(elapsed / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        var current = Math.round(eased * target);
+        el.textContent = prefix + current + suffix;
+        if (progress < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          el.textContent = prefix + target + suffix;
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+
+    return runCount;
+  }
+
+  var counters = [];
+  document.querySelectorAll('[data-count]').forEach(function(el) {
+    counters.push(animateCounter(el));
+  });
+
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        step.classList.add('visible');
+        /* Start counters after stat cards fade in */
+        setTimeout(function() {
+          counters.forEach(function(run) { run(); });
+        }, 800);
+        obs.unobserve(step);
+      }
+    });
+  }, { threshold: 0.1 });
+  obs.observe(step);
+
+  setTimeout(function() {
+    if (!step.classList.contains('visible')) {
+      step.classList.add('visible');
+      setTimeout(function() {
+        counters.forEach(function(run) { run(); });
+      }, 800);
+    }
+  }, 400);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: #FFFFFF;
+    overflow: hidden;
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .hd-step {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: 40px 32px;
+    min-height: 260px;
+  }
+
+  /* ── Left: step number + label ── */
+  .step-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .hd-step.visible .step-meta { opacity: 1; transform: translateY(0); }
+
+  .step-number {
+    font-size: 48px;
+    font-weight: 900;
+    color: #1EBA8F;
+    line-height: 1;
+  }
+
+  .step-label {
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #5A7A8A;
+    margin-top: 8px;
+    white-space: nowrap;
+  }
+
+  /* ── Divider ── */
+  .step-divider {
+    width: 2px;
+    height: 80px;
+    background: #E8EEF1;
+    position: relative;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .step-divider::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #1EBA8F;
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.6s ease;
+    transition-delay: 0.3s;
+  }
+  .hd-step.visible .step-divider::after { transform: scaleY(1); }
+
+  /* ── Right: strategy visual ── */
+  .strategy-visual {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition-delay: 0.2s;
+  }
+  .hd-step.visible .strategy-visual { opacity: 1; transform: translateY(0); }
+
+  /* Avatar source (small card) */
+  .source-card {
+    width: 56px;
+    height: 56px;
+    background: #F0FAF6;
+    border: 2px solid #1EBA8F;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transform: scale(0);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition-delay: 0.5s;
+  }
+  .hd-step.visible .source-card { transform: scale(1); }
+
+  .source-card svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  /* Arrow */
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .arrow-line {
+    width: 40px;
+    height: 2px;
+    background: #E8EEF1;
+    position: relative;
+    overflow: hidden;
+  }
+  .arrow-line::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #1EBA8F;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+    transition-delay: 0.7s;
+  }
+  .hd-step.visible .arrow-line::after { transform: scaleX(1); }
+
+  .arrow-tip {
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 8px solid #E8EEF1;
+    transition: border-left-color 0.3s ease;
+    transition-delay: 1.0s;
+  }
+  .hd-step.visible .arrow-tip { border-left-color: #1EBA8F; }
+
+  /* Angle cards (fan) */
+  .angle-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .angle-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #F7F9FA;
+    border: 1px solid #E8EEF1;
+    border-radius: 10px;
+    padding: 10px 16px;
+    transform: translateX(-10px) scale(0.95);
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease, border-color 0.3s ease;
+  }
+
+  .angle-card:nth-child(1) { transition-delay: 0.9s; }
+  .angle-card:nth-child(2) { transition-delay: 1.05s; }
+  .angle-card:nth-child(3) { transition-delay: 1.2s; }
+  .angle-card:nth-child(4) { transition-delay: 1.35s; }
+
+  .hd-step.visible .angle-card {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+    border-color: #D1E8DF;
+  }
+
+  .angle-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .angle-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .angle-line {
+    height: 5px;
+    border-radius: 3px;
+    background: #D1E8DF;
+  }
+  .angle-line:nth-child(1) { width: 100px; }
+  .angle-line:nth-child(2) { width: 70px; }
+
+  .angle-tag {
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #1EBA8F;
+    background: #F0FAF6;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  /* ── Looping ambient animations ── */
+  @keyframes source-breathe {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(30, 186, 143, 0); }
+    50% { box-shadow: 0 0 12px 3px rgba(30, 186, 143, 0.15); }
+  }
+
+  @keyframes card-hover {
+    0%, 100% { transform: translateX(0) scale(1); }
+    50% { transform: translateX(2px) scale(1.01); }
+  }
+
+  @keyframes tag-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  @keyframes arrow-flow {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .hd-step.visible .source-card {
+    animation: source-breathe 3.5s ease-in-out infinite;
+    animation-delay: 2s;
+  }
+
+  .hd-step.visible .angle-card {
+    animation: card-hover 4s ease-in-out infinite;
+  }
+  .hd-step.visible .angle-card:nth-child(1) { animation-delay: 2s; }
+  .hd-step.visible .angle-card:nth-child(2) { animation-delay: 2.3s; }
+  .hd-step.visible .angle-card:nth-child(3) { animation-delay: 2.6s; }
+  .hd-step.visible .angle-card:nth-child(4) { animation-delay: 2.9s; }
+
+  .hd-step.visible .angle-tag {
+    animation: tag-pulse 3s ease-in-out infinite;
+  }
+  .hd-step.visible .angle-card:nth-child(1) .angle-tag { animation-delay: 2.2s; }
+  .hd-step.visible .angle-card:nth-child(2) .angle-tag { animation-delay: 2.5s; }
+  .hd-step.visible .angle-card:nth-child(3) .angle-tag { animation-delay: 2.8s; }
+  .hd-step.visible .angle-card:nth-child(4) .angle-tag { animation-delay: 3.1s; }
+
+  .hd-step.visible .arrow-line::after {
+    background: linear-gradient(90deg, #1EBA8F 0%, #1EBA8F 40%, #5EDBB8 50%, #1EBA8F 60%, #1EBA8F 100%) !important;
+    background-size: 200% 100% !important;
+    animation: arrow-flow 3s ease-in-out infinite;
+    animation-delay: 2s;
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 500px) {
+    .hd-step {
+      flex-direction: column;
+      gap: 20px;
+      padding: 28px 20px;
+      min-height: auto;
+    }
+    .step-meta { flex-direction: row; gap: 12px; }
+    .step-number { font-size: 36px; }
+    .step-divider { width: 40px; height: 2px; }
+    .step-divider::after { transform-origin: left; }
+    .hd-step.visible .step-divider::after { transform: scaleX(1); }
+    .strategy-visual { flex-direction: column; gap: 16px; }
+    .arrow-line { width: 2px; height: 24px; }
+    .arrow-line::after { transform-origin: top; }
+    .hd-step.visible .arrow-line::after { transform: scaleY(1); }
+    .arrow-tip {
+      border-top: 8px solid #E8EEF1;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-bottom: none;
+    }
+    .hd-step.visible .arrow-tip { border-top-color: #1EBA8F; }
+    .flow-arrow { flex-direction: column; }
+    .angle-line:nth-child(1) { width: 80px; }
+    .angle-line:nth-child(2) { width: 56px; }
+  }
+</style>
+</head>
+<body>
+<div class="hd-step" id="step">
+  <div class="step-meta">
+    <div class="step-number">02</div>
+    <div class="step-label">Strategy & Angles</div>
+  </div>
+
+  <div class="step-divider"></div>
+
+  <div class="strategy-visual">
+    <!-- Avatar source -->
+    <div class="source-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#1EBA8F" stroke-width="2" stroke-linecap="round">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M5 20c0-3.87 3.13-7 7-7s7 3.13 7 7"/>
+      </svg>
+    </div>
+
+    <!-- Arrow -->
+    <div class="flow-arrow">
+      <div class="arrow-line"></div>
+      <div class="arrow-tip"></div>
+    </div>
+
+    <!-- Angle cards -->
+    <div class="angle-cards">
+      <div class="angle-card">
+        <svg class="angle-icon" viewBox="0 0 20 20" fill="none">
+          <rect x="2" y="2" width="16" height="16" rx="3" stroke="#1EBA8F" stroke-width="1.5"/>
+          <path d="M6 7h8M6 10h5" stroke="#1EBA8F" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <div class="angle-lines">
+          <div class="angle-line"></div>
+          <div class="angle-line"></div>
+        </div>
+        <div class="angle-tag">Hook</div>
+      </div>
+      <div class="angle-card">
+        <svg class="angle-icon" viewBox="0 0 20 20" fill="none">
+          <rect x="2" y="2" width="16" height="16" rx="3" stroke="#1EBA8F" stroke-width="1.5"/>
+          <path d="M6 7h8M6 10h5" stroke="#1EBA8F" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <div class="angle-lines">
+          <div class="angle-line"></div>
+          <div class="angle-line"></div>
+        </div>
+        <div class="angle-tag">Angle</div>
+      </div>
+      <div class="angle-card">
+        <svg class="angle-icon" viewBox="0 0 20 20" fill="none">
+          <rect x="2" y="2" width="16" height="16" rx="3" stroke="#1EBA8F" stroke-width="1.5"/>
+          <path d="M6 7h8M6 10h5" stroke="#1EBA8F" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <div class="angle-lines">
+          <div class="angle-line"></div>
+          <div class="angle-line"></div>
+        </div>
+        <div class="angle-tag">Copy</div>
+      </div>
+      <div class="angle-card">
+        <svg class="angle-icon" viewBox="0 0 20 20" fill="none">
+          <rect x="2" y="2" width="16" height="16" rx="3" stroke="#1EBA8F" stroke-width="1.5"/>
+          <path d="M6 7h8M6 10h5" stroke="#1EBA8F" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <div class="angle-lines">
+          <div class="angle-line"></div>
+          <div class="angle-line"></div>
+        </div>
+        <div class="angle-tag">CTA</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var step = document.getElementById('step');
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        step.classList.add('visible');
+        obs.unobserve(step);
+      }
+    });
+  }, { threshold: 0.1 });
+  obs.observe(step);
+
+  setTimeout(function() {
+    if (!step.classList.contains('visible')) {
+      step.classList.add('visible');
+    }
+  }, 400);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: #FFFFFF;
+    overflow: hidden;
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .hd-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 32px 40px;
+    min-height: 280px;
+  }
+
+  .hd-hero .eyebrow {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 3.5px;
+    text-transform: uppercase;
+    color: #1EBA8F;
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .hd-hero .headline {
+    font-size: 36px;
+    font-weight: 900;
+    color: #00334B;
+    line-height: 1.15;
+    max-width: 620px;
+    margin-bottom: 16px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition-delay: 0.15s;
+  }
+
+  .hd-hero .subtitle {
+    font-size: 17px;
+    font-weight: 400;
+    color: #5A7A8A;
+    line-height: 1.6;
+    max-width: 520px;
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    transition-delay: 0.3s;
+  }
+
+  .hd-hero.visible .eyebrow,
+  .hd-hero.visible .headline,
+  .hd-hero.visible .subtitle {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Step roadmap ── */
+  .roadmap {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: relative;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    transition-delay: 0.5s;
+  }
+  .hd-hero.visible .roadmap { opacity: 1; }
+
+  .roadmap-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .roadmap-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #F7F9FA;
+    border: 2px solid #E8EEF1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 900;
+    color: #5A7A8A;
+    transform: scale(0);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+  }
+
+  .hd-hero.visible .roadmap-step:nth-child(1) .roadmap-dot { transition-delay: 0.7s; }
+  .hd-hero.visible .roadmap-step:nth-child(3) .roadmap-dot { transition-delay: 0.9s; }
+  .hd-hero.visible .roadmap-step:nth-child(5) .roadmap-dot { transition-delay: 1.1s; }
+  .hd-hero.visible .roadmap-step:nth-child(7) .roadmap-dot { transition-delay: 1.3s; }
+  .hd-hero.visible .roadmap-step:nth-child(9) .roadmap-dot { transition-delay: 1.5s; }
+
+  .hd-hero.visible .roadmap-dot {
+    transform: scale(1);
+    border-color: #1EBA8F;
+    color: #1EBA8F;
+    background: #F0FAF6;
+  }
+
+  .roadmap-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: #5A7A8A;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 8px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .hd-hero.visible .roadmap-step:nth-child(1) .roadmap-label { transition-delay: 0.85s; }
+  .hd-hero.visible .roadmap-step:nth-child(3) .roadmap-label { transition-delay: 1.05s; }
+  .hd-hero.visible .roadmap-step:nth-child(5) .roadmap-label { transition-delay: 1.25s; }
+  .hd-hero.visible .roadmap-step:nth-child(7) .roadmap-label { transition-delay: 1.45s; }
+  .hd-hero.visible .roadmap-step:nth-child(9) .roadmap-label { transition-delay: 1.65s; }
+
+  .hd-hero.visible .roadmap-label { opacity: 1; }
+
+  /* Connecting lines between dots */
+  .roadmap-line {
+    width: 48px;
+    height: 2px;
+    background: #E8EEF1;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    margin-top: -18px;
+  }
+
+  .roadmap-line::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #1EBA8F;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+  }
+
+  .hd-hero.visible .roadmap-step:nth-child(2) .roadmap-line::after { transition-delay: 0.8s; }
+  .hd-hero.visible .roadmap-step:nth-child(4) .roadmap-line::after { transition-delay: 1.0s; }
+  .hd-hero.visible .roadmap-step:nth-child(6) .roadmap-line::after { transition-delay: 1.2s; }
+  .hd-hero.visible .roadmap-step:nth-child(8) .roadmap-line::after { transition-delay: 1.4s; }
+
+  .hd-hero.visible .roadmap-line::after { transform: scaleX(1); }
+
+  /* ── Looping ambient animations ── */
+  @keyframes dot-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(30, 186, 143, 0); }
+    50% { box-shadow: 0 0 12px 2px rgba(30, 186, 143, 0.15); }
+  }
+
+  @keyframes line-shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  @keyframes subtle-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+
+  .hd-hero.visible .roadmap-dot {
+    animation: dot-pulse 3s ease-in-out infinite;
+    animation-delay: 2.2s;
+  }
+  .hd-hero.visible .roadmap-step:nth-child(3) .roadmap-dot { animation-delay: 2.4s; }
+  .hd-hero.visible .roadmap-step:nth-child(5) .roadmap-dot { animation-delay: 2.6s; }
+  .hd-hero.visible .roadmap-step:nth-child(7) .roadmap-dot { animation-delay: 2.8s; }
+  .hd-hero.visible .roadmap-step:nth-child(9) .roadmap-dot { animation-delay: 3.0s; }
+
+  .hd-hero.visible .roadmap-line::after {
+    background: linear-gradient(90deg, #1EBA8F 0%, #1EBA8F 40%, #5EDBB8 50%, #1EBA8F 60%, #1EBA8F 100%);
+    background-size: 200% 100%;
+    animation: line-shimmer 4s ease-in-out infinite;
+    animation-delay: 2.5s;
+  }
+
+  .hd-hero.visible .eyebrow {
+    animation: subtle-float 4s ease-in-out infinite;
+    animation-delay: 2s;
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 500px) {
+    .hd-hero { padding: 32px 20px 28px; min-height: 240px; }
+    .hd-hero .headline { font-size: 26px; }
+    .hd-hero .subtitle { font-size: 15px; margin-bottom: 28px; }
+    .roadmap-dot { width: 28px; height: 28px; font-size: 11px; }
+    .roadmap-line { width: 24px; }
+    .roadmap-label { font-size: 7px; }
+  }
+</style>
+</head>
+<body>
+<div class="hd-hero" id="hero">
+  <div class="eyebrow">The Huddle Duck AI Engine</div>
+  <div class="headline">Imagine if AI Just Handled Your Marketing</div>
+  <div class="subtitle">Launching your idea to as many people as you could possibly handle. At will. At scale. Systematically.</div>
+
+  <div class="roadmap">
+    <!-- Step 1 -->
+    <div class="roadmap-step">
+      <div class="roadmap-dot">1</div>
+      <div class="roadmap-label">Avatar</div>
+    </div>
+    <!-- Line -->
+    <div class="roadmap-step">
+      <div class="roadmap-line"></div>
+    </div>
+    <!-- Step 2 -->
+    <div class="roadmap-step">
+      <div class="roadmap-dot">2</div>
+      <div class="roadmap-label">Strategy</div>
+    </div>
+    <!-- Line -->
+    <div class="roadmap-step">
+      <div class="roadmap-line"></div>
+    </div>
+    <!-- Step 3 -->
+    <div class="roadmap-step">
+      <div class="roadmap-dot">3</div>
+      <div class="roadmap-label">Content</div>
+    </div>
+    <!-- Line -->
+    <div class="roadmap-step">
+      <div class="roadmap-line"></div>
+    </div>
+    <!-- Step 4 -->
+    <div class="roadmap-step">
+      <div class="roadmap-dot">4</div>
+      <div class="roadmap-label">Targeting</div>
+    </div>
+    <!-- Line -->
+    <div class="roadmap-step">
+      <div class="roadmap-line"></div>
+    </div>
+    <!-- Step 5 -->
+    <div class="roadmap-step">
+      <div class="roadmap-dot">5</div>
+      <div class="roadmap-label">Optimise</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var hero = document.getElementById('hero');
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        hero.classList.add('visible');
+        obs.unobserve(hero);
+      }
+    });
+  }, { threshold: 0.1 });
+  obs.observe(hero);
+
+  // Fallback for iframe context where element may already be visible
+  setTimeout(function() {
+    if (!hero.classList.contains('visible')) {
+      hero.classList.add('visible');
+    }
+  }, 400);
+})();
+</script>
+</body>
+</html>
